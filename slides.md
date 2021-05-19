@@ -41,7 +41,7 @@ There were two options:
 
 - Some hacks are required to get good `autocomplete` to work
 
-- Becomes very slow, very quick when `autocomplete` and `fuzzy searching` are added
+- Becomes very slow when `autocomplete` and `fuzzy searching` are added
 
 </v-click>
 2. RediSearch
@@ -81,25 +81,55 @@ $ make build
 
 ---
 
-```bash
+# Normal Searching with multiple fields
+
+```bash {1|3-5|7-8|10-23}
 $ redis-cli
 
-> 
+# Inserting data into redis cache
+> HSET products:1 name "Apple iPhone 12" keywords "smartphone apple fastest"
+> ...
+
+# Creating a secondary index
+> FT.CREATE product_idx ON HASH PREFIX 1 products: SCHEMA name TEXT SORTABLE keywords TEXT
+
+# Searching the index
+> FT.SEARCH product_idx "smartphone"
+
+1) (integer) 2
+2) "products:2"
+3) 1) "name"
+   2) "Samsung Galaxy s8"
+   3) "keywords"
+   4) "smartphone samsung' fastest"
+4) "products:1"
+5) 1) "name"
+   2) "Apple iPhone 12"
+   3) "keywords"
+   4) "smartphone apple fastest"
 ```
 
 ---
-layout: center
----
 
-# Demo Time
+# Autocompletion
 
+```bash {1-5|7-10|12-15}
+# Adding to autocomplete dictionary named `auto_complete`
+# 1 is the weightage
 
----
-layout: center
----
+> FT.SUGADD auto_complete "Apple iPhone 12" 1
+> FT.SUGADD auto_complete "Apple iPad 10.5" 1
 
-# The Blockers in integrating it with Frappe/ERPNext
+# Getting autocomplete suggesstions
+> FT.SUGGET auto_complete "a" MAX 3
+1) "Apple iPhone 12"
+2) "Apple iPad 10.5"
 
+# With fuzzy
+> FT.SUGGET auto_complete "aple" FUZZY  MAX 3
+1) "Apple iPhone 12"
+2) "Apple iPad 10.5"
+```
 
 ---
 # Awesome Conf Talk on RediSearch
@@ -113,4 +143,4 @@ layout: center
 class: 'text-white'
 ---​
 
-# Thank You
+# > exit

@@ -1,4 +1,5 @@
-# Welcome to [Slidev](https://github.com/slidevjs/slidev)!
+# Presentation on RediSearch, made with slidev
+
 
 To start the slide show:
 
