@@ -79,6 +79,16 @@ $ make build
 
 </v-click>
 
+<v-click>
+
+3. Loading
+
+```bash
+> MODULE LOAD <path-to-binary>
+```
+
+</v-click>
+
 ---
 
 # Normal Searching with multiple fields
